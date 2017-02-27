@@ -18,13 +18,16 @@ class User: NSObject {
     var dictionaryObj: NSDictionary?
     
     init(dictionary: NSDictionary) {
-        
+        //print (dictionary)
         self.dictionaryObj = dictionary
         self.name = dictionary["name"] as? NSString
         self.screenname = dictionary["name"] as? NSString
         
-        if let profileURLString = dictionary["profile_image_url_htpps"] as? String {
-            self.profileURL = NSURL(string: profileURLString)
+        let profileUrlString = dictionary["profile_image_url_https"] as? String
+        if let profileUrlString = profileUrlString {
+            profileURL = NSURL(string: profileUrlString)
+        } else {
+            profileURL = NSURL(string: "")
         }
         
         self.tagline = dictionary["description"] as? NSString
@@ -37,17 +40,17 @@ class User: NSObject {
         get {
             let defaults = UserDefaults.standard
             
-            if _currentUser == nil {
+            let userData = defaults.object(forKey: "currentUser") as? Data
+            
+            if let userData = userData {
                 
-                
-                let userData = defaults.object(forKey: "currentUser") as? Data
-                
-                if let userData = userData {
-                    let dictionary = try! JSONSerialization.jsonObject(with: userData, options: []) as! NSDictionary
-                    _currentUser = User(dictionary: dictionary)
+                if let dict = try! JSONSerialization.jsonObject(with: userData, options: []) as? NSDictionary {
+                    _currentUser = User(dictionary: dict)
+                } else {
+                    _currentUser = nil
                 }
-                
             }
+            
             return _currentUser
         }
         
@@ -55,15 +58,16 @@ class User: NSObject {
             
             _currentUser = user
             let defaults = UserDefaults.standard
-            if let user = user {
-                let data = try! JSONSerialization.data(withJSONObject: user.dictionaryObj!, options: [])
+            if let user = _currentUser {
+                let data = try! JSONSerialization.data(withJSONObject: user.dictionaryObj ?? [], options: [])
                 defaults.set(data, forKey: "currentUser")
             } else {
-                defaults.removeObject(forKey: "currentUserData")
+                defaults.removeObject(forKey: "currentUser")
             }
             defaults.synchronize()
         }
     }
+
     
     
     

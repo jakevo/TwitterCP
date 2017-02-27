@@ -19,9 +19,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Override point for customization after application launch.
         if  User.currentUser != nil {
             print("not nil")
-            let storyboard1 = UIStoryboard(name: "Main", bundle: nil)
+            let storyboard = UIStoryboard(name: "Main", bundle: nil)
             
-            let vc = storyboard1.instantiateViewController(withIdentifier: "tweetNav")
+            let vc = storyboard.instantiateViewController(withIdentifier: "tweetNav")
             
             window?.rootViewController = vc
         }
@@ -31,7 +31,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 let storyboard = UIStoryboard(name: "Main", bundle: nil)
                 let vc = storyboard.instantiateInitialViewController()
                 self.window?.rootViewController = vc
-                User.currentUser = nil
             })
         
         
@@ -61,9 +60,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func application(_ app: UIApplication, open url: URL, options: [UIApplicationOpenURLOptionsKey : Any] = [:]) -> Bool {
-        print(url.description)
-        
-        
+        //print(url.description)
         TwitterClient.sharedInstance?.handleURL(url: url)
         
         

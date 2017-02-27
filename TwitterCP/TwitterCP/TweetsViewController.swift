@@ -8,10 +8,10 @@
 
 import UIKit
 
-class TweetsViewController: UIViewController {
+class TweetsViewController: UIViewController, UITabBarDelegate, UITableViewDataSource {
 
     @IBOutlet weak var tableview: UITableView!
-    
+    var tweetsArray: [Tweet]!
     @IBAction func onLogout(_ sender: Any) {
         
         TwitterClient.sharedInstance?.logout()
@@ -19,13 +19,32 @@ class TweetsViewController: UIViewController {
     }
     override func viewDidLoad() {
         super.viewDidLoad()
-        if User.currentUser != nil {
-            print("something is wrong")
+        let client = TwitterClient.sharedInstance!
+                
+        client.homeTimeline(success: { (tweets: [Tweet]) in
+                print (tweets)
+        }) { (error:NSError) in
+            print(error.localizedDescription)
         }
+        
+        
+        
+        
         // Do any additional setup after loading the view.
     }
     
-
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        
+        
+        return tweetsArray.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        
+        let cell = tableView.dequeueReusableCell(withIdentifier: "cell") as! TweetCell
+        cell.tweet = tweetsArray[indexPath.row]
+        return cell
+    }
 
     /*
     // MARK: - Navigation

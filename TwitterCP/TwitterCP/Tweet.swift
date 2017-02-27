@@ -17,7 +17,8 @@ class Tweet: NSObject {
     var timestamp: NSDate?
     var retweetCount: Int = 0
     var favoritesCount: Int = 0
-    
+    var profileImage: URL?
+    var usertweet: NSString?
     
     init(dictionary: NSDictionary) {
         text = dictionary["text"] as? NSString
@@ -25,7 +26,12 @@ class Tweet: NSObject {
         
         favoritesCount = (dictionary["favorite_count"] as? Int) ?? 0
         
+        let userOnTimeline = dictionary["user"] as! NSDictionary
+        profileImage = URL(string: userOnTimeline["profile_image_url"] as! String)
+        usertweet = userOnTimeline["name"] as? NSString
+        print("I am here before timestampe")
         if let timestampString = dictionary["created at"] as? String {
+            print("I am here inside timestampe")
             //date parser to get correct date format
             let formatter = DateFormatter()
             
